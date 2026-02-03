@@ -10,20 +10,43 @@ crypto(‘password’) -> ssapdorw
 check(‘ssapdorw’, ‘password’) -> true
 check(‘ssapdorw’, ‘wrong’) -> false
 */
-
-function crypto (password){
-    const middleString = Math.ceil(password.length / 2); // Середина строки
-    const startString = password.slice(0, middleString); // Обрезаем начало строки
-    const endString = password.slice(middleString);// Обрезаем конец строки
-    const reverseStart = startString.split('').reverse().join('');
-    const reverseEnd = endString.split('').reverse().join(''); // Разбиваем на символы, переворачиваем склеиваем
-
-    return reverseStart + reverseEnd;
+// Меняем местами элементы массива согласно ТЗ
+// помощник: меняет местами элементы массива по индексам i и j
+function swap(arr, i, j) {
+  if (i < 0 || j < 0 || i >= arr.length || j >= arr.length) return;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
 }
 
-function check(encryptedPassword, password){
-    const decrypted = crypto(encryptedPassword);
-    return decrypted === password;
+// Шифратор
+function crypto(password) {
+  const chars = password.split(''); // разбили по символам
+
+  // заданный порядок перестановок
+  swap(chars, 0, 3);
+  swap(chars, 1, 2);
+  swap(chars, 4, 7);
+
+  return chars.join('');
 }
-console.log(crypto('Anton')) 
-console.log(check('tnAno', 'Bird'))
+
+// Расшифровка (обратный алгоритм)
+function decrypt(encrypted) {
+  const chars = encrypted.split('');
+
+  // обратный порядок перестановок
+  swap(chars, 4, 7);
+  swap(chars, 1, 2);
+  swap(chars, 0, 3);
+
+  return chars.join('');
+}
+
+// Проверка
+function check(encryptedPassword, password) {
+  return decrypt(encryptedPassword) === password;
+}
+
+// Тесты из задания
+console.log(crypto('password'));             
+console.log(check('ssapdorw', 'password'));   
+console.log(check('ssapdorw', 'wrong'));      
